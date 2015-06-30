@@ -1,14 +1,11 @@
 #!/bin/bash
 
-# Enable vm.overcommit_memory
-sysctl vm.overcommit_memory=1
-
 if [ "${REDIS_PASS}" == "**Random**" ]; then
     unset REDIS_PASS
 fi
 
 # Set initial configuration
-if [ ! -f /.redis_configured ]; then
+if ([ ! -f /.redis_configured ] && [ ! -f /usr/local/etc/redis/redis.conf ]); then
 
     mkdir -p /usr/local/etc/redis
     touch /usr/local/etc/redis/redis.conf
