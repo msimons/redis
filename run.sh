@@ -1,18 +1,23 @@
 #!/bin/bash
 
+# Enable vm.overcommit_memory
+sysctl vm.overcommit_memory=1
+
 if [ "${REDIS_PASS}" == "**Random**" ]; then
     unset REDIS_PASS
 fi
 
 # Set initial configuration
 if [ ! -f /.redis_configured ]; then
-    touch /etc/redis/redis_default.conf
+
+    mkdir -p /usr/local/etc/redis
+    touch /usr/local/etc/redis/redis.conf
 
     if [ "${REDIS_PASS}" != "**None**" ]; then
         PASS=${REDIS_PASS:-$(pwgen -s 32 1)}
         _word=$( [ ${REDIS_PASS} ] && echo "preset" || echo "random" )
         echo "=> Securing redis with a ${_word} password"
-        echo "requirepass $PASS" >> /etc/redis/redis_default.conf
+        echo "requirepass $PASS" >> /usr/local/etc/redis/redis.conf
         echo "=> Done!"
         echo "========================================================================"
         echo "You can now connect to this Redis server using:"
@@ -35,13 +40,13 @@ if [ ! -f /.redis_configured ]; then
     fi
 
     for i in $(printenv | grep REDIS_); do
-        echo $i | sed "s/REDIS_//" | sed "s/_/-/" | sed "s/=/ /" | sed "s/^[^ ]*/\L&\E/" >> /etc/redis/redis_default.conf
+        echo $i | sed "s/REDIS_//" | sed "s/_/-/" | sed "s/=/ /" | sed "s/^[^ ]*/\L&\E/" >> /usr/local/etc/redis/redis.conf
     done
 
     echo "=> Using redis.conf:"
-    cat /etc/redis/redis_default.conf | grep -v "requirepass"
+    cat /usr/local/etc/redis/redis.conf | grep -v "requirepass"
 
     touch /.redis_configured
 fi
 
-exec /usr/bin/redis-server /etc/redis/redis_default.conf
+exec redis-server /usr/local/etc/redis/redis.conf
