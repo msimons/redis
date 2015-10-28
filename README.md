@@ -1,7 +1,7 @@
 # Redis (not only) for Drupal
 ---
 
-Redis docker image (not only) for Drupal, based on [tutumcould's](https://github.com/tutumcloud/redis) docker container.
+Redis docker image (not only) for Drupal, based on [tutumcloud's](https://github.com/tutumcloud/redis) docker container.
 
 **Changes**
 * this image uses the official redis image as its base image
