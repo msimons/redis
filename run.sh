@@ -5,7 +5,9 @@ if [ "${REDIS_PASS}" == "**Random**" ]; then
 fi
 
 # Set initial configuration
-if ([ ! -f /.redis_configured ] && [ ! -f /usr/local/etc/redis/redis.conf ]); then
+if ([ ! -f /.redis_configured ]); then
+
+    unset REDIS_VERSION REDIS_DOWNLOAD_URL REDIS_DOWNLOAD_SHA1
 
     mkdir -p /usr/local/etc/redis
     touch /usr/local/etc/redis/redis.conf
@@ -37,7 +39,16 @@ if ([ ! -f /.redis_configured ] && [ ! -f /usr/local/etc/redis/redis.conf ]); th
     fi
 
     for i in $(printenv | grep REDIS_); do
-        echo $i | sed "s/REDIS_//" | sed "s/_/-/" | sed "s/=/ /" | sed "s/^[^ ]*/\L&\E/" >> /usr/local/etc/redis/redis.conf
+        i=$(echo $i | sed "s/REDIS_//" | sed "s/_/-/" | sed "s/^[^ ]*/\L&\E/")
+        IFS='=' read -a conf <<< "${i}"
+        # Replace existing configuration file lines with environment variables, or
+        # saving the new values to the configuration file.
+        if [ $( grep -ic "${conf[0]}" /usr/local/etc/redis/redis.conf ) -ge 1 ]
+        then
+            sed -i "s/${conf[0]}.*/${conf[0]} ${conf[1]}/g" /usr/local/etc/redis/redis.conf
+        else
+            echo ${conf[0]} " " ${conf[1]}  >> /usr/local/etc/redis/redis.conf
+        fi
     done
 
     echo "=> Using redis.conf:"
@@ -46,4 +57,4 @@ if ([ ! -f /.redis_configured ] && [ ! -f /usr/local/etc/redis/redis.conf ]); th
     touch /.redis_configured
 fi
 
-exec redis-server /usr/local/etc/redis/redis.conf
+redis-server /usr/local/etc/redis/redis.conf
