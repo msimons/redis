@@ -1,0 +1,14 @@
+redis:
+  image: mxr576/redis
+  hostname: redis
+  restart: always
+  ports:
+    - "6379:6379"
+  volumes_from:
+    - redis_data
+redis_data:
+  image: mxr576/redis
+  command: echo "Data only container for the Redis container."
+  volumes:
+    - /data
+    - /var/log/redis
