@@ -3,7 +3,6 @@ MAINTAINER Dezső BICZÓ <mxr576@gmail.com>
 
 # Update the base image.
 RUN apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get install pwgen -y && \
     rm -rf /var/lib/apt/lists/*
 
