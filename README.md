@@ -7,7 +7,7 @@ Redis docker image (not only) for Drupal, based on [tutumcloud's](https://github
 * this image uses the official redis image as its base image
 * added a default configuration file based on Pantheon's [recommended settings](https://pantheon.io/docs/articles/sites/redis-as-a-caching-backend/#is-redis-set-up-as-an-lru-cache)
 
-**Important**: The default configuration file's settings could be overridden from environment variables too.
+**Important**: The default configuration file's settings could be overridden with environment variables too.
 
 Usage
 -----
